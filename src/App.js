@@ -1,49 +1,64 @@
-import { useState, useEffect } from "react";
-
-import clothingData from "./data/clothing";
-import logo from "./logo.svg";
+import { useState } from "react";
+import { useRerender } from "./utils/hooks";
+import ItemDisplay from "./components/ItemDisplay";
+import clothingData from "./data/clothing_v2";
 import "./App.css";
-import Top from "./components/Top";
-import Bottom from "./components/Bottom";
-import Shoes from "./components/Shoes";
 
 function App() {
+  const [dressCode, setDressCode] = useState("casual");
+
+  const reRender = useRerender();
+
+  const handleDressCode = (dressCodeOption) => {
+    setDressCode(dressCodeOption);
+    reRender();
+  };
+
+  const clothingFilter = (type) => {
+    return clothingData.filter(
+      (item) => item.type === type && item.dressCode === dressCode
+    );
+  };
+
+  const tops = clothingFilter("top");
+  const bottoms = clothingFilter("bottom");
+  const shoes = clothingFilter("shoes");
 
   return (
     <div className="App">
-      <Top />
-      <Bottom />
-      <Shoes />
+      <div className="app-title">
+        <h4>OUTFIT PLANNER</h4>
+        <p>FIND WHAT TO WEAR</p>
+      </div>
 
-      {/* <header className="App-header">
-
-      </header> */}
-
-      {/* {clothingData.map(({ description, type, dressCode, imageUrl }, i) => {
-        return (
-          <div className="item-card" key={i}>
-            <div>{description}</div>
-            <div>{type}</div>
-            <div>{dressCode}</div>
-            <img src={imageUrl} alt={`${dressCode} ${type}`} />
-          </div>
-        );
-      })} */}
+      <div className="buttons-container">
+        <h5 className="buttons-title">Fashion Styles / Dress Code</h5>
+        <button
+          onClick={() => handleDressCode("casual")}
+          className={dressCode === "casual" ? "active" : null}
+        >
+          Casual
+        </button>
+        <button
+          onClick={() => handleDressCode("sport")}
+          className={dressCode === "sport" ? "active" : null}
+        >
+          Sport
+        </button>
+        <button
+          onClick={() => handleDressCode("formal")}
+          className={dressCode === "formal" ? "active" : null}
+        >
+          Formal
+        </button>
+      </div>
+      <div className="display-container">
+        <ItemDisplay itemList={tops}>TOP</ItemDisplay>
+        <ItemDisplay itemList={bottoms}>BOTTOM</ItemDisplay>
+        <ItemDisplay itemList={shoes}>SHOES</ItemDisplay>
+      </div>
     </div>
   );
 }
 
 export default App;
-
-// {/* <img src={logo} className="App-logo" alt="logo" />
-// <p>
-//   Edit <code>src/App.js</code> and save to reload.
-// </p>
-// <a
-//   className="App-link"
-//   href="https://reactjs.org"
-//   target="_blank"
-//   rel="noopener noreferrer"
-// >
-//   Learn React
-// </a> */}
